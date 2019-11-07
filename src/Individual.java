@@ -3,6 +3,12 @@ public class Individual {
     private int fitnessScore;
     private Gene[] genes;
 
+    public Individual(){
+        this.noGenes = -1;
+        this.fitnessScore = -1;
+        this.genes = new Gene[0];
+    }
+
     public Individual(int noGenes){
         /**
          * Créé aléatoirement un individu
@@ -12,6 +18,15 @@ public class Individual {
         this.genes = new Gene[noGenes];
         initGenes();
         computeFitness();
+    }
+
+    public Individual(Individual i){
+        this.noGenes = i.noGenes;
+        this.fitnessScore = i.fitnessScore;
+        this.genes = new Gene[this.noGenes];
+        for (int j = 0; j < noGenes; j++) {
+            this.genes[j] = i.genes[j];
+        }
     }
 
     public Individual(Individual parent1, Individual parent2, int crossPoint){
@@ -37,6 +52,14 @@ public class Individual {
             }
         }
         computeFitness();
+    }
+
+    public Gene[] getGenes() {
+        return genes;
+    }
+
+    public int getFitnessScore() {
+        return fitnessScore;
     }
 
     public int getNoGenes() {

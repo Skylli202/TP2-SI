@@ -16,25 +16,31 @@ public class AlgoGen {
 
     public static void main(String[] args) {
         // Création d'une population de 5 individus comportant 8 gènes
-        ConvergenceVisuel();
+//        ConvergenceVisuel();
 
         // Check function
 //        checkAccouplement();
-//        checkRoulette();
-
+//        checkRandom();
+        checkRoulette();
     }
 
 
     // -- FUNCTION
-    public static void ConvergenceVisuel(){
+    public static void ConvergenceVisuel(String mode){
         Population populationOriginal = new Population(10, 7);
         System.out.println("*****************\nPopulation de départ : [" + populationOriginal.getSize() + ";" + populationOriginal.getGenePoolSize() +"]\n" + populationOriginal + "*****************");
 
         Population pop = new Population(populationOriginal);
         boolean run = true;
         while (run) {
-            // Generate child pop with roulette method
-            Population childPop = pop.genChildPopByRoulette();
+            // Generate child pop
+            Population childPop;
+            if (mode.equals("ROULETTE"))
+                childPop = pop.genChildPopByRoulette();
+            else if (mode.equals("TOURNOI"))
+                childPop = pop.genChildPopByTournoi();
+            else // default generation is random
+                childPop = pop.genChildPopByRandom();
 
             // Display childPop
             System.out.println("Child pop :\n" + childPop);
@@ -55,7 +61,6 @@ public class AlgoGen {
         }
     }
 
-
     // -- CHECK FUNCTION
     public static void checkAccouplement(){
         Population pop = new Population(6, 9);
@@ -69,14 +74,22 @@ public class AlgoGen {
         System.out.println("Parent 1 : " + parent1);
         System.out.println("Parent 2 : " + parent2);
         System.out.println("Child 1 : " + child1);
-        System.out.println("Child 2: " + child2);
+        System.out.println("Child 2 : " + child2);
     }
 
-    public static void checkRoulette(){
+    public static void checkRandom(){
         Population pop = new Population(6, 9);
         System.out.println(pop + "\n");
 
-        Population popChild = pop.genChildPopByRoulette();
+        Population popChild = pop.genChildPopByRandom();
         System.out.println(popChild);
+    }
+
+    public static void checkRoulette(){
+        Population populationOriginal = new Population(10, 7);
+        System.out.println("*****************\nPopulation de départ : [" + populationOriginal.getSize() + ";" + populationOriginal.getGenePoolSize() +"]\n" + populationOriginal + "*****************");
+
+        Population childPop = populationOriginal.genChildPopByRoulette();
+        System.out.println(childPop);
     }
 }
