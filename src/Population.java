@@ -26,6 +26,7 @@ public class Population {
     public Population(Population p){
         this.size = p.size;
         this.genePoolSize = p.genePoolSize;
+        this.population = new Individual[this.size];
         for (int i = 0; i < this.size; i++) {
             this.population[i] = p.population[i];
         }

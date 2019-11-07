@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class AlgoGen {
 
     /*
@@ -28,12 +30,28 @@ public class AlgoGen {
         Population populationOriginal = new Population(10, 7);
         System.out.println("*****************\nPopulation de départ : [" + populationOriginal.getSize() + ";" + populationOriginal.getGenePoolSize() +"]\n" + populationOriginal + "*****************");
 
-        Population pop = populationOriginal; // REFERENCE NOT COPY
-        pop.addIndividual(new Individual(7));
-        System.out.println(pop + "" + populationOriginal);
+        Population pop = new Population(populationOriginal);
         boolean run = true;
         while (run) {
+            // Generate child pop with roulette method
+            Population childPop = pop.genChildPopByRoulette();
 
+            // Display childPop
+            System.out.println("Child pop :\n" + childPop);
+
+            // Override pop by childPop
+            pop = childPop;
+
+            // Ask if convergence is reach
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("La convergence est-elle atteinte ? (Y/N)");
+            String userIntput = scanner.nextLine();
+            while(!(userIntput.equalsIgnoreCase("Y") || userIntput.equalsIgnoreCase("N"))){ // making sure that userInput is Y or N ONLY
+                System.out.println("Répondez par Y ou N uniquement");
+                userIntput = scanner.nextLine();
+            }
+            if(userIntput.equalsIgnoreCase("Y"))
+                run = false;
         }
     }
 
