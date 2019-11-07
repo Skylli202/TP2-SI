@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class Population {
     private int size;
     private int genePoolSize;
@@ -19,6 +21,14 @@ public class Population {
 //        this.genePoolSize = 0;
         this.population = new Individual[size];
         initEmptyPop();
+    }
+
+    public Population(Population p){
+        this.size = p.size;
+        this.genePoolSize = p.genePoolSize;
+        for (int i = 0; i < this.size; i++) {
+            this.population[i] = p.population[i];
+        }
     }
 
     public int getSize() {
@@ -45,9 +55,32 @@ public class Population {
         this.population = population;
     }
 
-
     public Individual getIndividualAt(int i){
         return population[i];
+    }
+
+    public Population genChildPopByRoulette(){
+        Population res = new Population();
+        res.setGenePoolSize(this.getGenePoolSize());
+
+        while(res.getSize() < this.getSize()){
+//            int Min = 0;
+//            int Max = res.getSize()-1;
+//            int random1 = Min + (int)(Math.random() * ((Max - Min) + 1));
+//            int random2 = Min + (int)(Math.random() * ((Max - Min) + 1));
+//            System.out.println("rand1 : " + random1 + "\nrand2 : " + random2);
+            Random rand = new Random();
+            int random1 = (int)rand.nextInt(this.size);
+            int random2 = (int)rand.nextInt(this.size);
+//            System.out.println("rand1 : " + random1 + "\nrand2 : " + random2);
+
+            res.addIndividual(new Individual(this.getIndividualAt(random1), this.getIndividualAt(random2), this.getGenePoolSize()/2));
+            if(res.getSize()+1 < this.getSize()) // Checking that the pop size of child pop won't be bigger than parent pop one
+                res.addIndividual(new Individual(this.getIndividualAt(random2), this.getIndividualAt(random1), this.getGenePoolSize()/2));
+        }
+
+
+        return res;
     }
 
     public void addIndividual(Individual i){
@@ -60,6 +93,7 @@ public class Population {
                 tmp[j] = this.population[j];
             }
             tmp[size-1] = i;
+            this.population = tmp;
         }
     }
 

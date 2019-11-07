@@ -14,36 +14,33 @@ public class AlgoGen {
 
     public static void main(String[] args) {
         // Création d'une population de 5 individus comportant 8 gènes
-//        Population pop = new Population(5, 8);
-//        System.out.println(pop);
+        ConvergenceVisuel();
 
         // Check function
 //        checkAccouplement();
-        roulette();
+//        checkRoulette();
 
     }
 
-    public static void roulette(){
-        Population pop = new Population(5, 9);
-        Population popChild = new Population();
-        popChild.setGenePoolSize(pop.getGenePoolSize());
 
-        while(popChild.getSize() <= pop.getSize()){
-            int Min = 0;
-            int Max = pop.getSize()-1;
-            int random1 = Min + (int)(Math.random() * ((Max - Min) + 1));
-            int random2 = Min + (int)(Math.random() * ((Max - Min) + 1));
+    // -- FUNCTION
+    public static void ConvergenceVisuel(){
+        Population populationOriginal = new Population(10, 7);
+        System.out.println("*****************\nPopulation de départ : [" + populationOriginal.getSize() + ";" + populationOriginal.getGenePoolSize() +"]\n" + populationOriginal + "*****************");
 
-            popChild.addIndividual(new Individual(pop.getIndividualAt(random1), pop.getIndividualAt(random2), pop.getGenePoolSize()/2));
-            popChild.addIndividual(new Individual(pop.getIndividualAt(random2), pop.getIndividualAt(random1), pop.getGenePoolSize()/2));
-            System.out.println(popChild.getSize());
+        Population pop = populationOriginal; // REFERENCE NOT COPY
+        pop.addIndividual(new Individual(7));
+        System.out.println(pop + "" + populationOriginal);
+        boolean run = true;
+        while (run) {
+
         }
-
-        System.out.println(popChild);
     }
 
+
+    // -- CHECK FUNCTION
     public static void checkAccouplement(){
-        Population pop = new Population(5, 9);
+        Population pop = new Population(6, 9);
 
         Individual parent1 = pop.getIndividualAt(0);
         Individual parent2 = pop.getIndividualAt(1);
@@ -55,5 +52,13 @@ public class AlgoGen {
         System.out.println("Parent 2 : " + parent2);
         System.out.println("Child 1 : " + child1);
         System.out.println("Child 2: " + child2);
+    }
+
+    public static void checkRoulette(){
+        Population pop = new Population(6, 9);
+        System.out.println(pop + "\n");
+
+        Population popChild = pop.genChildPopByRoulette();
+        System.out.println(popChild);
     }
 }
