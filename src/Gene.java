@@ -20,6 +20,14 @@ public class Gene {
         }
     }
 
+    public void mutate(){
+        if(value == 0)
+            value = 1;
+        else{
+            value = 0;
+        }
+    }
+
     public int getValue(){
         return this.value;
     }

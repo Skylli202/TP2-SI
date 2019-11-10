@@ -1,3 +1,5 @@
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class AlgoGen {
@@ -14,14 +16,20 @@ public class AlgoGen {
     5. Recommencer les étapes 2 à 4 jusqu'à convergence
      */
 
+    /**
+     * TODO : Implémenter la détection de la Convergence
+     * TODO : Implémenter la mutation (BitFlip)
+     */
+
     public static void main(String[] args) {
-        // Création d'une population de 5 individus comportant 8 gènes
-//        ConvergenceVisuel();
+//        ConvergenceVisuel("TOURNOI");
+        ConvergenceDetected("TOURNOI", 4);
 
         // Check function
 //        checkAccouplement();
 //        checkRandom();
-        checkRoulette();
+//        checkRoulette();
+//        checkTournoi();
     }
 
 
@@ -61,6 +69,45 @@ public class AlgoGen {
         }
     }
 
+    public static void ConvergenceDetected(String mode, int convThreshhold){
+        Population populationOriginal = new Population(10, 7);
+        System.out.println("*****************\nPopulation de départ : [" + populationOriginal.getSize() + ";" + populationOriginal.getGenePoolSize() +"]\n" + populationOriginal + "*****************");
+
+        Population pop = new Population(populationOriginal);
+
+        boolean isConvergenceReached = false;
+        int tmp = 0;
+        while(!isConvergenceReached){
+            // Generate child pop
+            Population childPop;
+            if (mode.equals("ROULETTE"))
+                childPop = pop.genChildPopByRoulette();
+            else if (mode.equals("TOURNOI"))
+                childPop = pop.genChildPopByTournoi();
+            else // default generation is random
+                childPop = pop.genChildPopByRandom();
+
+            // Display childPop
+            System.out.println("Child pop :\n" + childPop);
+
+            // Compare Max
+            if(childPop.getBestIndividual().isEqualTo(pop.getBestIndividual())){
+                tmp++;
+            } else {
+                tmp = 0;
+            }
+
+            // Override pop by childPop
+            pop = childPop;
+
+            // Detection of Convergence
+            if(tmp >= convThreshhold)
+                // si convThreshhold population d'affilés ont le même max alors la convergence est atteinte
+                isConvergenceReached = true;
+        }
+        System.out.println("La convergence a été atteinte après " + convThreshhold + " valeur maximal succéssive atteinte.");
+    }
+
     // -- CHECK FUNCTION
     public static void checkAccouplement(){
         Population pop = new Population(6, 9);
@@ -90,6 +137,14 @@ public class AlgoGen {
         System.out.println("*****************\nPopulation de départ : [" + populationOriginal.getSize() + ";" + populationOriginal.getGenePoolSize() +"]\n" + populationOriginal + "*****************");
 
         Population childPop = populationOriginal.genChildPopByRoulette();
+        System.out.println(childPop);
+    }
+
+    public static void checkTournoi(){
+        Population populationOriginal = new Population(10, 7);
+        System.out.println("*****************\nPopulation de départ : [" + populationOriginal.getSize() + ";" + populationOriginal.getGenePoolSize() +"]\n" + populationOriginal + "*****************");
+
+        Population childPop = populationOriginal.genChildPopByTournoi();
         System.out.println(childPop);
     }
 }

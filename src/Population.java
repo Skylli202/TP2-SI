@@ -1,11 +1,27 @@
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
+/**
+ * TODO: Contest with a parameter for contest size
+ *
+ * */
+
 public class Population {
+    // Attribute
     private int size;
     private int genePoolSize;
     private Individual[] population;
 
-    public Population(int size, int genePoolSize){
+    // Constructor
+    public Population(){ // Void Constructor
+        this.size = 0;
+//        this.genePoolSize = 0;
+        this.population = new Individual[size];
+        initEmptyPop();
+    }
+
+    public Population(int size, int genePoolSize){ // Constructor
         /***
          * :param size Taille de la population
          * :param genePoolSize Nombre de gènes par individu
@@ -16,14 +32,7 @@ public class Population {
         initEmptyPop();
     }
 
-    public Population(){
-        this.size = 0;
-//        this.genePoolSize = 0;
-        this.population = new Individual[size];
-        initEmptyPop();
-    }
-
-    public Population(Population p){
+    public Population(Population p){ // Copy Constructor
         this.size = p.size;
         this.genePoolSize = p.genePoolSize;
         this.population = new Individual[this.size];
@@ -32,32 +41,44 @@ public class Population {
         }
     }
 
-    public int getSize() {
-        return size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
-    }
-
-    public int getGenePoolSize() {
-        return genePoolSize;
-    }
-
-    public void setGenePoolSize(int genePoolSize) {
-        this.genePoolSize = genePoolSize;
-    }
-
-    public Individual[] getPopulation() {
-        return population;
-    }
-
-    public void setPopulation(Individual[] population) {
-        this.population = population;
-    }
-
+    // Method
     public Individual getIndividualAt(int i){
         return population[i];
+    }
+
+    public Individual getBestIndividual(){
+        // Return the best Individual in the population
+        Individual res;
+        int bestFitness = -1;
+        int indice = -1;
+        for (int i = 0; i < this.getSize(); i++) {
+            if(this.getIndividualAt(i).getFitnessScore() > bestFitness){
+                bestFitness = this.getIndividualAt(i).getFitnessScore();
+                indice = i;
+            }
+        }
+
+        if(indice == -1){
+            // should be a unreachable code
+            throw new IllegalArgumentException("this pop is fucked up with no fitness score greater than -1");
+        } else {
+            res = new Individual(this.getIndividualAt(indice));
+        }
+        return res;
+    }
+
+    public void addIndividual(Individual i){
+        if(this.genePoolSize != i.getNoGenes()){
+            throw new IllegalArgumentException("Individual geneSize do not match with population GenePoolSize");
+        } else {
+            this.size++;
+            Individual[] tmp = new Individual[size];
+            for (int j = 0; j < this.population.length; j++) {
+                tmp[j] = this.population[j];
+            }
+            tmp[size-1] = i;
+            this.population = tmp;
+        }
     }
 
     public int computeFitnessPop(){
@@ -68,6 +89,13 @@ public class Population {
         return res;
     }
 
+    public void initEmptyPop(){
+        // Création aléatoire de la population
+        for(int i=0; i < this.size; i++)
+            this.population[i] = new Individual(this.genePoolSize);
+    }
+
+    // Generation Method
     public Population genChildPopByRandom(){
         Population res = new Population();
         res.setGenePoolSize(this.getGenePoolSize());
@@ -148,35 +176,88 @@ public class Population {
         Population res = new Population();
         res.setGenePoolSize(this.getGenePoolSize());
 
-        // Calculate the sum of all fitness of all individual
-        int popFitness = 0; // int isn't a problem as a fitness score cannot be a float number
+        /**
+         * Tournoi a k participant :
+         *      -> Sélectionner k participants
+         *      -> Prendre le meilleur de cette sélection : Parent 1
+         *      -> Recommencer pour obtenir : Parent 2
+         *      -> reproduction des deux parents sélectionner dans le but d'obtenir une nouvelle population
+         *
+         * Note : Malgré les ressources a notre disposition nous avons des incertitudes sur le travail a réalisé.
+         * Nous partirons donc de ce postulat :
+         *      -> Le tounoi sélectionne les parents, qui sont ensuite croiser pour générer un enfant qui est ajouté a la nouvelle population généré
+         *          -> Et non pas : Le tounoi sélectionne des individues qui sont ajoutés directement dans la population enfant
+         *      -> Le vainqueur d'un tournoi n'est pas supprimé de la liste des potentiels participant a un tournoi ultérieurs
+         *      -> k sera égale a 2.
+         * */
 
+        while(res.getSize() < this.getSize()){
+            // Void instantiation
+            Individual parent1 = new Individual(), parent2 = new Individual();
+            Individual participant1 = new Individual(), participant2 = new Individual();
 
+            // Select k=2 participant for our contest
+            Random rand = new Random();
+            int random_tournoi1_1 = (int) rand.nextInt(this.getSize());
+            int random_tournoi1_2 = (int) rand.nextInt(this.getSize());
+            int random_tournoi2_1 = (int) rand.nextInt(this.getSize());
+            int random_tournoi2_2 = (int) rand.nextInt(this.getSize());
+
+            // Contest 1
+            participant1 = new Individual(this.getIndividualAt(random_tournoi1_1));
+            participant2 = new Individual(this.getIndividualAt(random_tournoi1_2));
+
+            if(participant1.isBetterThan(participant2)){
+                parent1 = new Individual(participant1);
+            } else {
+                parent1 = new Individual(participant2);
+            }
+
+            // Contest 2
+            participant1 = new Individual(this.getIndividualAt(random_tournoi2_1));
+            participant2 = new Individual(this.getIndividualAt(random_tournoi2_2));
+
+            if(participant1.isBetterThan(participant2)){
+                parent2 = new Individual(participant1);
+            } else {
+                parent2 = new Individual(participant2);
+            }
+
+            // Here parent1 and parent2 are found.
+            res.addIndividual(new Individual(parent1, parent2, this.getGenePoolSize()/2));
+            if(res.getSize()+1 < this.getSize()) // Checking that the pop size of child pop won't be bigger than parent pop one
+                res.addIndividual(new Individual(parent2, parent1, this.getGenePoolSize()/2));
+        }
 
         return res;
     }
 
-    public void addIndividual(Individual i){
-        if(this.genePoolSize != i.getNoGenes()){
-            throw new IllegalArgumentException("Individual geneSize do not match with population GenePoolSize");
-        } else {
-            this.size++;
-            Individual[] tmp = new Individual[size];
-            for (int j = 0; j < this.population.length; j++) {
-                tmp[j] = this.population[j];
-            }
-            tmp[size-1] = i;
-            this.population = tmp;
-        }
+    // Accessor
+    public int getSize() {
+        return size;
     }
 
-
-    public void initEmptyPop(){
-        // Création aléatoire de la population
-        for(int i=0; i < this.size; i++)
-            this.population[i] = new Individual(this.genePoolSize);
+    public void setSize(int size) {
+        this.size = size;
     }
 
+    public int getGenePoolSize() {
+        return genePoolSize;
+    }
+
+    public void setGenePoolSize(int genePoolSize) {
+        this.genePoolSize = genePoolSize;
+    }
+
+    public Individual[] getPopulation() {
+        return population;
+    }
+
+    public void setPopulation(Individual[] population) {
+        this.population = population;
+    }
+
+    // Generic Method
     @Override
     public String toString() {
         // Renvoie une String contenant chaque individu avec son score de fitness

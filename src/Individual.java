@@ -100,4 +100,20 @@ public class Individual {
         res += "](" + this.fitnessScore + ")";
         return res;
     }
+
+    public boolean isBetterThan(Individual i) {
+        // Renvoie true ssi this est meilleur (fitness strictement supérieur) que l'individue passer en parametre
+        if(this.fitnessScore > i.fitnessScore)
+            return true;
+        else
+            return false;
+    }
+
+    public boolean isEqualTo(Individual i) {
+        // return true if this & i do have the same fitness score
+        if(this.getFitnessScore() == i.getFitnessScore())
+            return true;
+        else
+            return false;
+    }
 }
