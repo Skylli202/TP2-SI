@@ -29,11 +29,25 @@ public class Individual {
         }
     }
 
+    public Individual(int[] i){
+        /**
+         * Créer un Individue dont les genes sont passées en parametre
+         * :param i tableau de la valeur des genes
+         */
+        this.noGenes = i.length;
+        this.genes = new Gene[i.length];
+        for (int j = 0; j < i.length; j++) {
+            this.genes[j] = new Gene(i[j]);
+        }
+        computeFitness();
+    }
+
     public Individual(Individual parent1, Individual parent2, int crossPoint){
         /**
          * Créé un invidu à partir de 2 parents
          * :param parent1 Le premier parent
          * :param parent2 Le second parent
+         * :param crossPoint le crossPoint
          */
 //        int pivot = (this.genes.length/2);
         if(parent1.noGenes != parent2.noGenes){
@@ -48,6 +62,60 @@ public class Individual {
                     this.genes[i] = new Gene(parent1.genes[i].getValue());
                 } else {
                     this.genes[i] = new Gene(parent2.genes[i].getValue());
+                }
+            }
+        }
+        computeFitness();
+    }
+
+    public Individual(Individual parent1, Individual parent2, int crossPoint1, int crossPoint2){
+        /**
+         * Créé un invidu à partir de 2 parents
+         * :param parent1 Le premier parent
+         * :param parent2 Le second parent
+         * :param crosspoint1 le premier crossPoint
+         * :param crosspoint2 le second crossPoint
+         */
+//        int pivot = (this.genes.length/2);
+        if(parent1.noGenes != parent2.noGenes){
+            throw new IllegalArgumentException("Parents genes length are different");
+        } else {
+            this.noGenes = parent1.noGenes;
+            this.genes = new Gene[noGenes];
+
+            for (int i = 0; i < parent1.noGenes; i++) {
+                if(i < crossPoint1 || i > crossPoint2){
+                    this.genes[i] = new Gene(parent1.genes[i].getValue());
+                } else {
+                    this.genes[i] = new Gene(parent2.genes[i].getValue());
+                }
+            }
+        }
+        computeFitness();
+    }
+
+    public Individual(Individual parent1, Individual parent2, int[] crossPoint){
+        /**
+         * Créé un invidu à partir de 2 parents
+         * :param parent1 Le premier parent
+         * :param parent2 Le second parent
+         * :param crosspoint contient la liste des k crossPoint
+         */
+//        int pivot = (this.genes.length/2);
+        if(parent1.noGenes != parent2.noGenes){
+            throw new IllegalArgumentException("Parents genes length are different");
+        } else {
+            for (int i = 0; i < crossPoint.length; i++) {
+                if(i%2 == 0){
+                    for (int j = 0; j < parent1.noGenes; j++) {
+                        if(j > crossPoint[i])
+                            this.genes[i] = new Gene(parent1.genes[i].getValue());
+                    }
+                } else {
+                    for (int j = 0; j < parent1.noGenes; j++) {
+                        if(j > crossPoint[i])
+                            this.genes[i] = new Gene(parent2.genes[i].getValue());
+                    }
                 }
             }
         }
@@ -115,5 +183,9 @@ public class Individual {
             return true;
         else
             return false;
+    }
+
+    public void mutateGenAt(int i) {
+        this.genes[i].mutate();
     }
 }

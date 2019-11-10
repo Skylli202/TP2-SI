@@ -103,8 +103,8 @@ public class Population {
         while(res.getSize() < this.getSize()){
 
             Random rand = new Random();
-            int random1 = (int)rand.nextInt(this.size);
-            int random2 = (int)rand.nextInt(this.size);
+            int random1 = rand.nextInt(this.size);
+            int random2 = rand.nextInt(this.size);
 //            System.out.println("rand1 : " + random1 + "\nrand2 : " + random2);
 
             res.addIndividual(new Individual(this.getIndividualAt(random1), this.getIndividualAt(random2), this.getGenePoolSize()/2));
@@ -136,8 +136,8 @@ public class Population {
             Individual parent1 = new Individual(), parent2 = new Individual();
 
             Random rand = new Random();
-            int r1 = (int) rand.nextInt(popFitness);
-            int r2 = (int) rand.nextInt(popFitness);
+            int r1 = rand.nextInt(popFitness);
+            int r2 = rand.nextInt(popFitness);
 
             // Find which individual is at r
             int i = 0;
@@ -198,10 +198,10 @@ public class Population {
 
             // Select k=2 participant for our contest
             Random rand = new Random();
-            int random_tournoi1_1 = (int) rand.nextInt(this.getSize());
-            int random_tournoi1_2 = (int) rand.nextInt(this.getSize());
-            int random_tournoi2_1 = (int) rand.nextInt(this.getSize());
-            int random_tournoi2_2 = (int) rand.nextInt(this.getSize());
+            int random_tournoi1_1 = rand.nextInt(this.getSize());
+            int random_tournoi1_2 = rand.nextInt(this.getSize());
+            int random_tournoi2_1 = rand.nextInt(this.getSize());
+            int random_tournoi2_2 = rand.nextInt(this.getSize());
 
             // Contest 1
             participant1 = new Individual(this.getIndividualAt(random_tournoi1_1));
@@ -227,6 +227,19 @@ public class Population {
             res.addIndividual(new Individual(parent1, parent2, this.getGenePoolSize()/2));
             if(res.getSize()+1 < this.getSize()) // Checking that the pop size of child pop won't be bigger than parent pop one
                 res.addIndividual(new Individual(parent2, parent1, this.getGenePoolSize()/2));
+
+            // Mutation
+            /**
+             * Uncomment those two listener in order to observe the mutation
+             */
+            int willMutate = rand.nextInt(100);
+            if(willMutate < 15){ // pseudo simulation of 15% chance of mutating
+//                System.out.println("--- Mutation ---\nIndiv avant : "+ res.getIndividualAt(res.size-1));
+                willMutate = rand.nextInt(res.getGenePoolSize());
+                res.getIndividualAt(res.size-1).mutateGenAt(willMutate);
+                res.getIndividualAt(res.size-1).computeFitness();
+//                System.out.println("Indiv après : "+res.getIndividualAt(res.size-1)+"\n--- -------- ---");
+            }
         }
 
         return res;

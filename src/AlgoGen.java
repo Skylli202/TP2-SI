@@ -1,7 +1,10 @@
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Author : Elouan GOUINGUENET
+ *          David NAISSE
+ *          4A ILC (2019-20) TP2
+ */
 public class AlgoGen {
 
     /*
@@ -17,19 +20,65 @@ public class AlgoGen {
      */
 
     /**
-     * TODO : Implémenter la détection de la Convergence
+     * WARNING : TOURNOI EST LA SEUL METHODE DE SELECTION QUI DISPOSE DE LA MUTATION
      * TODO : Implémenter la mutation (BitFlip)
      */
 
     public static void main(String[] args) {
+        System.out.println("Elouan GOUINGUENET - David NAISSE");
+//      TP2 (K. Naudin)
 //        ConvergenceVisuel("TOURNOI");
-        ConvergenceDetected("TOURNOI", 4);
+//        ConvergenceDetected("TOURNOI", 4);
 
         // Check function
 //        checkAccouplement();
 //        checkRandom();
 //        checkRoulette();
 //        checkTournoi();
+//        checkMutate();
+//        checkMutateInContest();
+//        checkCross2Point();
+        checkCrossKPoint();
+
+
+        /**
+         * Sujet TP2 K. Naudin
+         * Compéter les méthodes laisser vide : Fait.
+         * Génération d'une population de Y individus : OK
+         * Reproduction a l'aide du système de roulette : OK (cf Population.genChildPopByRoulette())
+         * Recommencer jusqu'a l'obtention de la convergence (détecter visuellement) : OK (cf AlgoGen.ConvergenceVisuel(mode))
+         * Implémentation de la sélection par tournoi : OK (cf Population.genChildPopByTournoi())
+         * Implémentation de la détection de convergence : OK (cf AlgoGen.ConvergenceDetected())
+         * Implémentation de la mutation (type : BitFlip) : OK (cf Gene.mutate(), cf Population.genChildPopByTournoi() (sous section // Mutation))
+         *
+         */
+
+
+//        TP3 (W. Abdou)
+        /**
+         * Exercice 1 :
+         *
+         * 1) L'espace de recherche est de (2^35)-1 soit : 34 359 738 367
+         *
+         * 2) Roulette : cf méthode Population.genChildPopByRoulette()
+         *    Tournoi : cf méthode Population.genChildPopByTournoi()
+         *
+         * 3) Croisement :
+         *      1-point : cf Constructeur Individual(Individual parent1, Individual parent2, int crossPoint)
+         *      2-point : cf Constructeur Individual(Individual parent1, Individual parent2, int crossPoint1, int crossPoint2) and AlgoGen.checkCross2Point() for exemple/check
+         *      k-point : cf Constructeur Individual(Individual parent1, Individual parent2, int[] crossPoint) TODO
+         *
+         * 4) Réalisation de la méthode de mutation de type BitFlip : cf Gene.mutate()
+         *    Mise en application de la mutation de type BitFlip : cf Population.genChildPopByTournoi() (sous section // Mutation)
+         */
+
+        /**
+         * Exercice 2 :
+         * N = nombre de bits
+         * Y = taille de la population
+         * TODO : run our program and display the result
+         *
+         */
     }
 
 
@@ -146,5 +195,56 @@ public class AlgoGen {
 
         Population childPop = populationOriginal.genChildPopByTournoi();
         System.out.println(childPop);
+    }
+
+    public static void checkMutate(){
+        Individual indiv = new Individual(10);
+        System.out.println(indiv);
+
+        indiv.mutateGenAt(1);
+        System.out.println(indiv);
+    }
+
+    public static void checkMutateInContest(){
+        // UNCOMMENT LISTENER IN genChildPopByTournoi MUTATE SECTION
+        Population populationOriginal = new Population(10, 7);
+        System.out.println("*****************\nPopulation de départ : [" + populationOriginal.getSize() + ";" + populationOriginal.getGenePoolSize() +"]\n" + populationOriginal + "*****************");
+
+        Population childPop = populationOriginal.genChildPopByTournoi();
+        System.out.println(childPop);
+    }
+
+    public static void checkCross2Point(){
+        Individual parent1 = new Individual(10);
+        Individual parent2 = new Individual(10);
+
+        // Display
+        System.out.println("Parent 1 : " + parent1 + "\nParent 2 : " + parent2);
+
+        // Create an Individual with Constructor 2crossPoint
+        Individual child = new Individual(parent1, parent2, 2, 7);
+
+        // Display
+        System.out.println("Child    : " + child);
+        /**
+         * Expect to get indice 0, 1, 8, 9 from parent 1
+         *                      2, ..., 7 from parent 2
+         *            Check : OK
+         */
+
+    }
+
+    public static void checkCrossKPoint(){
+        Individual parent1 = new Individual(new int[]{0, 1, 0, 1});
+        Individual parent2 = new Individual(new int[]{0, 0, 1, 1});
+
+        // Display
+        System.out.println("Parent 1 : " + parent1 + "\nParent 2 : " + parent2);
+
+        // Create an Individual with Constructor 2crossPoint
+        Individual child = new Individual(parent1, parent2, new int[]{1});
+
+        // Display
+        System.out.println("Child    : " + child);
     }
 }
