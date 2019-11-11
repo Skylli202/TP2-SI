@@ -105,17 +105,41 @@ public class Individual {
         if(parent1.noGenes != parent2.noGenes){
             throw new IllegalArgumentException("Parents genes length are different");
         } else {
-            for (int i = 0; i < crossPoint.length; i++) {
-                if(i%2 == 0){
-                    for (int j = 0; j < parent1.noGenes; j++) {
-                        if(j > crossPoint[i])
-                            this.genes[i] = new Gene(parent1.genes[i].getValue());
+            this.noGenes = parent1.noGenes;
+            this.genes = new Gene[noGenes];
+
+            // From start to first crossPoint it is always the parent1
+            for (int i = 0; i < crossPoint[0]; i++) {
+                this.genes[i] = new Gene(parent1.genes[i].getValue());
+            }
+
+            for (int i = 1; i < crossPoint.length; i++) {
+                for (int j = crossPoint[i-1]; j < crossPoint[i]; j++) {
+                    // We are between two crossPoint
+                    if(i%2 == 0){
+                        // if the indice i is an even number then we are copying parent1
+                        this.genes[j] = new Gene(parent1.genes[j].getValue());
+                    } else {
+                        // .. otherwise its parent2
+                        this.genes[j] = new Gene(parent2.genes[j].getValue());
                     }
+                    // Because we are starting by copying parent1 into child AND we are only using two-parent model
+                    // every section of parent1 will be at an even number indice from the crossPoint[]
+                    // TL;DR : parent1 parent2 parent1 parent2   ...
+                    //            0       1       2       3      ...
+                    // {0,2,...} = even number indice -> parent1 copy
+                    // {1,3,...} = uneven number indice -> parent2 copy
+                }
+            }
+
+            // From last crossPoint to end of genes, need to be initialized
+            for (int i = crossPoint[crossPoint.length-1]; i < this.noGenes; i++) {
+                if(crossPoint.length%2 == 0){
+                    // if there is an even number of crosspoint then last part will always be parent1
+                    this.genes[i] = new Gene(parent1.genes[i].getValue());
                 } else {
-                    for (int j = 0; j < parent1.noGenes; j++) {
-                        if(j > crossPoint[i])
-                            this.genes[i] = new Gene(parent2.genes[i].getValue());
-                    }
+                    // if there is an uneven number of crosspoint then last part will always be parent2
+                    this.genes[i] = new Gene(parent2.genes[i].getValue());
                 }
             }
         }
@@ -144,6 +168,7 @@ public class Individual {
         // Calcule le score de fitness de l'individu à partir de ses gènes
         int cpt = 0; // Will never be a float number
         for (int i = 0; i < this.genes.length; i++) {
+//            System.out.println("i = " + i);
             if(this.genes[i].getValue() == 1){
                 cpt += Math.pow(2, this.genes.length-1-i);
             }

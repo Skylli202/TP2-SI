@@ -38,8 +38,7 @@ public class AlgoGen {
 //        checkMutate();
 //        checkMutateInContest();
 //        checkCross2Point();
-        checkCrossKPoint();
-
+//        checkCrossKPoint();
 
         /**
          * Sujet TP2 K. Naudin
@@ -66,7 +65,7 @@ public class AlgoGen {
          * 3) Croisement :
          *      1-point : cf Constructeur Individual(Individual parent1, Individual parent2, int crossPoint)
          *      2-point : cf Constructeur Individual(Individual parent1, Individual parent2, int crossPoint1, int crossPoint2) and AlgoGen.checkCross2Point() for exemple/check
-         *      k-point : cf Constructeur Individual(Individual parent1, Individual parent2, int[] crossPoint) TODO
+         *      k-point : cf Constructeur Individual(Individual parent1, Individual parent2, int[] crossPoint) and AlgoGen.checkCrossKPoint() for exemple/check
          *
          * 4) Réalisation de la méthode de mutation de type BitFlip : cf Gene.mutate()
          *    Mise en application de la mutation de type BitFlip : cf Population.genChildPopByTournoi() (sous section // Mutation)
@@ -235,14 +234,14 @@ public class AlgoGen {
     }
 
     public static void checkCrossKPoint(){
-        Individual parent1 = new Individual(new int[]{0, 1, 0, 1});
-        Individual parent2 = new Individual(new int[]{0, 0, 1, 1});
+        Individual parent1 = new Individual(new int[]{1, 1, 0, 0, 1, 1, 0, 0});
+        Individual parent2 = new Individual(new int[]{0, 0, 1, 1, 0, 0, 1, 1});
 
         // Display
         System.out.println("Parent 1 : " + parent1 + "\nParent 2 : " + parent2);
 
         // Create an Individual with Constructor 2crossPoint
-        Individual child = new Individual(parent1, parent2, new int[]{1});
+        Individual child = new Individual(parent1, parent2, new int[]{2, 4, 6});
 
         // Display
         System.out.println("Child    : " + child);
